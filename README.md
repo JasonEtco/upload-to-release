@@ -3,7 +3,7 @@
 
 ## Usage
 
-This action uploads any file to a new release. One example workflow is, to build and save a Docker image then upload it to a release:
+This action uploads any file to a new release. One example workflow is to build and save a Docker image then upload it to a release:
 
 ```workflow
 workflow "Package" {
