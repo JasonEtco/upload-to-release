@@ -5,20 +5,20 @@ set -o pipefail
 
 # Ensure that the GITHUB_TOKEN secret is included
 if [[ -z "$GITHUB_TOKEN" ]]; then
-	echo "Set the GITHUB_TOKEN env variable."
-	exit 1
+  echo "Set the GITHUB_TOKEN env variable."
+  exit 1
 fi
 
 # Ensure that the file path is present
 if [[ -z "$1" ]]; then
-	echo "You must pass at least one argument to this action, the path to the file to upload."
+  echo "You must pass at least one argument to this action, the path to the file to upload."
   exit 1
 fi
 
 # Only upload to non-draft releases
 IS_DRAFT=$(jq --raw-output '.release.draft' $GITHUB_EVENT_PATH)
 if [ "$IS_DRAFT" = true ]; then
-	echo "This is a draft, so nothing to do!"
+  echo "This is a draft, so nothing to do!"
   exit 0
 fi
 
