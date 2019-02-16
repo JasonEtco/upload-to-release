@@ -34,7 +34,8 @@ fi
 
 # Build the Upload URL from the various pieces
 RELEASE_ID=$(jq --raw-output '.release.id' $GITHUB_EVENT_PATH)
-UPLOAD_URL="https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}/assets?name=${1}"
+FILENAME=$(basename $1)
+UPLOAD_URL="https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}/assets?name=${FILENAME}"
 echo "$UPLOAD_URL"
 
 # Upload the file
