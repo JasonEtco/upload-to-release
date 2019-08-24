@@ -31,17 +31,14 @@ FILENAME=$(basename $1)
 # Prepare the headers
 AUTH_HEADER="Authorization: token ${GITHUB_TOKEN}"
 CONTENT_LENGTH_HEADER="Content-Length: $(stat -c%s "${FILENAME}")"
-
-if [[ -z "$2" ]]; then
-  CONTENT_TYPE_HEADER="Content-Type: ${2}"
-else
-  CONTENT_TYPE_HEADER="Content-Type: $(file -b --mime-type ${FILENAME})"
-fi
+CONTENT_TYPE_HEADER="Content-Type: $(file -b --mime-type ${FILENAME})"
 
 # Build the Upload URL from the various pieces
 RELEASE_ID=$(jq --raw-output '.release.id' $GITHUB_EVENT_PATH)
 UPLOAD_URL="https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}/assets?name=${FILENAME}"
-echo "$UPLOAD_URL"
+echo "UPLOAD_URL: $UPLOAD_URL"
+echo "CONTENT_LENGTH_HEADER: $CONTENT_LENGTH_HEADER"
+echo "CONTENT_TYPE_HEADER: $CONTENT_TYPE_HEADER"
 
 # Upload the file
 curl \
