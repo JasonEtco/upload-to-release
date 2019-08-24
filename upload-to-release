@@ -37,8 +37,6 @@ CONTENT_TYPE_HEADER="Content-Type: $(file -b --mime-type ${FILENAME})"
 RELEASE_ID=$(jq --raw-output '.release.id' $GITHUB_EVENT_PATH)
 UPLOAD_URL="https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}/assets?name=${FILENAME}"
 echo "UPLOAD_URL: $UPLOAD_URL"
-echo "CONTENT_LENGTH_HEADER: $CONTENT_LENGTH_HEADER"
-echo "CONTENT_TYPE_HEADER: $CONTENT_TYPE_HEADER"
 
 # Upload the file
 curl \

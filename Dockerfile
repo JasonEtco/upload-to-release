@@ -10,7 +10,8 @@ RUN	apk add --no-cache \
   bash \
   ca-certificates \
   curl \
-  jq
+  jq \
+  file
 
 COPY upload-to-release /usr/bin/upload-to-release
 
