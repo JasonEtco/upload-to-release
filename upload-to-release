@@ -32,7 +32,7 @@ CONTENT_LENGTH_HEADER="Content-Length: $(stat -c%s "${FILENAME}")"
 if [[ -z "$2" ]]; then
   CONTENT_TYPE_HEADER="Content-Type: ${2}"
 else
-  CONTENT_TYPE_HEADER="Content-Type: application/zip"
+  CONTENT_TYPE_HEADER="Content-Type: $(file -b --mime-type ${FILENAME})"
 fi
 
 # Build the Upload URL from the various pieces
