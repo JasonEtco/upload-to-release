@@ -52,7 +52,7 @@ for file in $*; do
       -H "${CONTENT_TYPE_HEADER}" \
       --upload-file "${FILENAME}" \
       "${UPLOAD_URL}"
-    if
+    fi
 
     echo "Uploaded: $UPLOAD_URL"
 done
