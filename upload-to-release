@@ -3,9 +3,6 @@
 set -e
 set -o pipefail
 
-# Bail if this push doesn't include a tag
-[[ "$GITHUB_REF" != refs/tags/* ]] && echo "${GITHUB_REF} is not a tag, exiting..." && exit 78
-
 # Ensure that the GITHUB_TOKEN secret is included
 if [[ -z "$GITHUB_TOKEN" ]]; then
   echo "Set the GITHUB_TOKEN env variable."
@@ -18,32 +15,43 @@ if [[ -z "$1" ]]; then
   exit 1
 fi
 
-# Only upload to non-draft releases
+# Do dry run with non-draft releases
 IS_DRAFT=$(jq --raw-output '.release.draft' $GITHUB_EVENT_PATH)
 if [ "$IS_DRAFT" = true ]; then
-  echo "This is a draft, so nothing to do!"
+  echo "This is a draft, starting a dry-run!"
   exit 0
 fi
 
-# Expand the filename to allow for glob pattern
-FILENAME=$(basename $1)
-
-# Prepare the headers
+# Prepare the auth header
 AUTH_HEADER="Authorization: token ${GITHUB_TOKEN}"
-CONTENT_LENGTH_HEADER="Content-Length: $(stat -c%s "${FILENAME}")"
-CONTENT_TYPE_HEADER="Content-Type: $(file -b --mime-type ${FILENAME})"
 
 # Build the Upload URL from the various pieces
 RELEASE_ID=$(jq --raw-output '.release.id' $GITHUB_EVENT_PATH)
-UPLOAD_URL="https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}/assets?name=${FILENAME}"
-echo "UPLOAD_URL: $UPLOAD_URL"
 
-# Upload the file
-curl \
-  -sSL \
-  -XPOST \
-  -H "${AUTH_HEADER}" \
-  -H "${CONTENT_LENGTH_HEADER}" \
-  -H "${CONTENT_TYPE_HEADER}" \
-  --upload-file "${FILENAME}" \
-  "${UPLOAD_URL}"
+# For each matching file
+for file in $*; do
+    echo "Processing file ${file}"
+
+    # Prepare the headers
+    CONTENT_LENGTH_HEADER="Content-Length: $(stat -c%s "${FILENAME}")"
+    CONTENT_TYPE_HEADER="Content-Type: $(file -b --mime-type ${FILENAME})"
+
+    # Expand the filename to allow for glob pattern
+    FILENAME=$(basename ${file})
+
+    UPLOAD_URL="https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}/assets?name=${FILENAME}"
+
+    # Upload the file
+    if [ "$IS_DRAFT" = false ]; then
+    curl \
+      -sSL \
+      -XPOST \
+      -H "${AUTH_HEADER}" \
+      -H "${CONTENT_LENGTH_HEADER}" \
+      -H "${CONTENT_TYPE_HEADER}" \
+      --upload-file "${FILENAME}" \
+      "${UPLOAD_URL}"
+    if
+
+    echo "Uploaded: $UPLOAD_URL"
+done
