@@ -25,20 +25,21 @@ fi
 # Prepare the auth header
 AUTH_HEADER="Authorization: token ${GITHUB_TOKEN}"
 
-# Build the Upload URL from the various pieces
+# Get the Release ID from event json
 RELEASE_ID=$(jq --raw-output '.release.id' $GITHUB_EVENT_PATH)
 
 # For each matching file
 for file in $*; do
     echo "Processing file ${file}"
 
+    # Expand the filename to allow for glob pattern
+    FILENAME=$(basename ${file})
+
     # Prepare the headers
     CONTENT_LENGTH_HEADER="Content-Length: $(stat -c%s "${FILENAME}")"
     CONTENT_TYPE_HEADER="Content-Type: $(file -b --mime-type ${FILENAME})"
 
-    # Expand the filename to allow for glob pattern
-    FILENAME=$(basename ${file})
-
+    # Build the Upload URL from the various pieces
     UPLOAD_URL="https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}/assets?name=${FILENAME}"
 
     # Upload the file
