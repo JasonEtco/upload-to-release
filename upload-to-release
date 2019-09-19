@@ -25,6 +25,7 @@ fi
 # Prepare the headers
 AUTH_HEADER="Authorization: token ${GITHUB_TOKEN}"
 CONTENT_LENGTH_HEADER="Content-Length: $(stat -c%s "${1}")"
+ACCEPT_HEADER="Accept: application/vnd.github.v3+json"
 
 if [[ -z "$2" ]]; then
   CONTENT_TYPE_HEADER="Content-Type: ${2}"
@@ -32,8 +33,13 @@ else
   CONTENT_TYPE_HEADER="Content-Type: application/zip"
 fi
 
+# Get the release ID from the tag name
+TAG_NAME=$(jq --raw-output ".ref" $GITHUB_EVENT_PATH | sed "s/refs\///g")
+RELEASES_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/tags/${TAG_NAME}"
+RELEASE_RESPONSE=$(curl -sSL -XGET -H "${AUTH_HEADER}" -H "${ACCEPT_HEADER}" ${RELEASES_URL})
+RELEASE_ID=$(echo ${resp} | jq .id | sed "s/\"//g")
+
 # Build the Upload URL from the various pieces
-RELEASE_ID=$(jq --raw-output '.release.id' $GITHUB_EVENT_PATH)
 FILENAME=$(basename $1)
 UPLOAD_URL="https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}/assets?name=${FILENAME}"
 echo "$UPLOAD_URL"
