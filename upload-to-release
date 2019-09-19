@@ -16,7 +16,7 @@ if [[ -z "$1" ]]; then
 fi
 
 # Only upload to non-draft releases
-IS_DRAFT=$(jq --raw-output '.release.draft' $GITHUB_EVENT_PATH)
+IS_DRAFT=$(jq --raw-output ".release.draft" $GITHUB_EVENT_PATH)
 if [ "$IS_DRAFT" = true ]; then
   echo "This is a draft, so nothing to do!"
   exit 0
