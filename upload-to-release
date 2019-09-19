@@ -37,7 +37,7 @@ fi
 TAG_NAME=$(jq --raw-output ".ref" $GITHUB_EVENT_PATH | sed "s/refs\///g")
 RELEASES_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/tags/${TAG_NAME}"
 RELEASE_RESPONSE=$(curl -sSL -XGET -H "${AUTH_HEADER}" -H "${ACCEPT_HEADER}" ${RELEASES_URL})
-RELEASE_ID=$(echo ${resp} | jq .id | sed "s/\"//g")
+RELEASE_ID=$(echo ${RELEASE_RESPONSE} | jq .id | sed "s/\"//g")
 
 # Build the Upload URL from the various pieces
 FILENAME=$(basename $1)
