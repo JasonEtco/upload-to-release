@@ -34,6 +34,11 @@ fi
 
 # Build the Upload URL from the various pieces
 RELEASE_ID=$(jq --raw-output '.release.id' $GITHUB_EVENT_PATH)
+if [[ -z "${RELEASE_ID}" ]]; then
+  echo "There was no release ID in the GitHub event. Are you using the release event type?"
+  exit 1
+fi
+
 FILENAME=$(basename $1)
 UPLOAD_URL="https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}/assets?name=${FILENAME}"
 echo "$UPLOAD_URL"
