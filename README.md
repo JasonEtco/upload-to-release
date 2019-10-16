@@ -66,3 +66,11 @@ You may also need to pass an additional argument, the `Content-Type` header used
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
+
+### Event type
+
+The event type your workflow is triggered from is critical to the function of this action. If you are not using `on: release` for your workflow this action will not work correctly.
+
+The event sent to the action by GitHub only contains an artifact upload URL when using the `release` event type to trigger the workflow.
+
+If you need other workflows not based on the `release` event, you should use multiple workflow definitions.
