@@ -1,0 +1,9 @@
+name: upload-to-release
+description: Uploads a file to a GitHub release
+author: JasonEtco
+branding:
+  color: blue
+  icon: package
+runs:
+  using: docker
+  image: Dockerfile
