@@ -45,6 +45,11 @@ fi
 UPLOAD_URL="https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}/assets?name=${FILENAME}"
 echo "$UPLOAD_URL"
 
+# List files being uploaded
+for file in $FILENAME; do
+  echo Uploading "${file##*/}"
+done
+
 # Upload the file
 curl \
   -f \
