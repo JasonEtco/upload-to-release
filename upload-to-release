@@ -22,9 +22,12 @@ if [ "$IS_DRAFT" = true ]; then
   exit 0
 fi
 
+# Expand the filename to allow for glob pattern
+FILENAME=$(basename $1)
+
 # Prepare the headers
 AUTH_HEADER="Authorization: token ${GITHUB_TOKEN}"
-CONTENT_LENGTH_HEADER="Content-Length: $(stat -c%s "${1}")"
+CONTENT_LENGTH_HEADER="Content-Length: $(stat -c%s "${FILENAME}")"
 
 if [[ -z "$2" ]]; then
   CONTENT_TYPE_HEADER="Content-Type: ${2}"
@@ -39,9 +42,13 @@ if [[ -z "${RELEASE_ID}" ]]; then
   exit 1
 fi
 
-FILENAME=$(basename $1)
 UPLOAD_URL="https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}/assets?name=${FILENAME}"
 echo "$UPLOAD_URL"
+
+# List files being uploaded
+for file in $FILENAME; do
+  echo Uploading "${file##*/}"
+done
 
 # Upload the file
 curl \
@@ -51,5 +58,5 @@ curl \
   -H "${AUTH_HEADER}" \
   -H "${CONTENT_LENGTH_HEADER}" \
   -H "${CONTENT_TYPE_HEADER}" \
-  --upload-file "${1}" \
+  --upload-file "${FILENAME}" \
   "${UPLOAD_URL}"
