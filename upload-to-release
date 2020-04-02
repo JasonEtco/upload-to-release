@@ -27,9 +27,9 @@ AUTH_HEADER="Authorization: token ${GITHUB_TOKEN}"
 CONTENT_LENGTH_HEADER="Content-Length: $(stat -c%s "${1}")"
 
 if [[ -z "$2" ]]; then
-  CONTENT_TYPE_HEADER="Content-Type: ${2}"
-else
   CONTENT_TYPE_HEADER="Content-Type: application/zip"
+else
+  CONTENT_TYPE_HEADER="Content-Type: ${2}"
 fi
 
 # Build the Upload URL from the various pieces
